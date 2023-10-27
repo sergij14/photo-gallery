@@ -1,5 +1,6 @@
 import NextAuth from "next-auth";
 import GithubProvider from "next-auth/providers/github";
+import { connectToDB } from "@/utils/connectDB";
 
 const handler = NextAuth({
   providers: [
@@ -9,20 +10,29 @@ const handler = NextAuth({
     }),
   ],
   callbacks: {
-    async session({ session, token }) {
+    async signIn({ user }) {
       try {
-        const userID = token.sub;
+        const mongoClient = await connectToDB();
 
-        return {
-          ...session,
-          user: {
-            ...session.user,
+        const { id: userID, name, image } = user;
+
+        const userExists = await mongoClient
+          ?.db()
+          .collection("users")
+          .findOne({ userID });
+
+        if (!userExists) {
+          await mongoClient?.db().collection("users").insertOne({
             userID,
-          },
-        };
+            name,
+            image
+          });
+        }
+
+        return true;
       } catch (err) {
         console.log(err);
-        return session;
+        return false;
       }
     },
   },
