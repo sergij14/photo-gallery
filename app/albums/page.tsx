@@ -11,8 +11,9 @@ import {
   AlertDialogHeader,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Cross1Icon } from "@radix-ui/react-icons";
+import { Cross1Icon, ReloadIcon } from "@radix-ui/react-icons";
 import { Loader } from "@/components/ui/loader";
+import { Button } from "@/components/ui/button";
 
 interface Album {
   data: string[];
@@ -25,25 +26,47 @@ export default function Albums() {
   const { toast } = useToast();
   const { data: session } = useSession();
   const [loading, setLoading] = useState<boolean>();
+  const [loadingDelete, setLoadingDelete] = useState<boolean>();
 
   const userID = session?.user.userID;
 
+  const getAlbums = async () => {
+    setLoading(true);
+    return axios
+      .get(`/api/albums?userID=${userID}`)
+      .then(({ data }) => {
+        setLoading(false);
+        setAlbums(data);
+      })
+      .catch((err) => {
+        setLoading(false);
+        toast({
+          variant: "destructive",
+          title: "Couldn't get albums",
+        });
+      });
+  };
+
+  const deleteAlbum = async (_id: string) => {
+    setLoadingDelete(true);
+    return axios
+      .delete(`/api/albums?albumID=${_id}`)
+      .then(({ data }) => {
+        setLoadingDelete(false);
+        getAlbums();
+      })
+      .catch((err) => {
+        setLoadingDelete(false);
+        toast({
+          variant: "destructive",
+          title: "Couldn't delete album",
+        });
+      });
+  };
+
   useEffect(() => {
     if (userID) {
-      setLoading(true);
-      axios
-        .get(`/api/albums?userID=${userID}`)
-        .then(({ data }) => {
-          setLoading(false);
-          setAlbums(data);
-        })
-        .catch((err) => {
-          setLoading(false);
-          toast({
-            variant: "destructive",
-            title: "Couldn't get albums",
-          });
-        });
+      getAlbums();
     }
   }, [userID]);
 
@@ -52,8 +75,24 @@ export default function Albums() {
       {loading && <Loader />}
       {(albums || []).map(({ name, data, _id }) => (
         <div key={_id} className="border-b border-gray-100">
-          <h3 className="text-2xl mb-2">Album: {name}</h3>
-          <h3 className="text-lg mb-2">Album ID: {_id}</h3>
+          <div className=" flex justify-between items-center gap-4">
+            <div>
+              <h3 className="text-2xl mb-2">Album: {name}</h3>
+              <h3 className="text-lg mb-2">Album ID: {_id}</h3>
+            </div>
+            <Button
+              onClick={() => deleteAlbum(_id)}
+              variant="destructive"
+              className="flex items-center gap-2"
+            >
+              {loadingDelete ? (
+                <ReloadIcon className="w-4 h-4 animate-spin" />
+              ) : (
+                <Cross1Icon className="w-4 h-4" />
+              )}
+              Delete Album
+            </Button>
+          </div>
           <h5 className="text-base mb-2">Images:</h5>
           <div className="grid grid-cols-3 gap-4 pb-4">
             {data.map((base64, idx) => (
@@ -78,6 +117,7 @@ export default function Albums() {
           </div>
         </div>
       ))}
+      {albums.length === 0 && <p>No albums...</p>}
     </div>
   );
 }

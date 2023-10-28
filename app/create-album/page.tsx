@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
@@ -25,6 +26,7 @@ export default function CreateAlbum() {
   const { toast } = useToast();
   const { data: session } = useSession();
 
+  const router = useRouter();
   const userID = session?.user.userID;
 
   const onFileUpload = (ev: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,11 +34,6 @@ export default function CreateAlbum() {
       const files = Array.from(ev.target.files);
       setImageFiles((prev) => [...prev, ...files]);
     }
-  };
-
-  const resetForm = () => {
-    setImgSrcs([]);
-    setImageFiles([]);
   };
 
   const createAlbum = async () => {
@@ -52,7 +49,7 @@ export default function CreateAlbum() {
         toast({
           title: "The album was created.",
         });
-        resetForm();
+        router.push("/albums");
       })
       .catch((err) => {
         setLoading(false);
@@ -123,7 +120,7 @@ export default function CreateAlbum() {
 
       {imgSrcs.length > 0 && (
         <div className="my-6">
-          <Button onClick={createAlbum} className="flexz items-center gap-3">
+          <Button onClick={createAlbum} className="flex items-center gap-2">
             {loading ? (
               <ReloadIcon className="w-4 h-4 animate-spin" />
             ) : (
