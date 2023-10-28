@@ -15,10 +15,11 @@ import {
   AlertDialogHeader,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Cross1Icon } from "@radix-ui/react-icons";
+import { Cross1Icon, ReloadIcon, UploadIcon } from "@radix-ui/react-icons";
 
 export default function CreateAlbum() {
   const [albumName, setAlbumName] = useState("Album Name");
+  const [loading, setLoading] = useState<boolean>();
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imgSrcs, setImgSrcs] = useState<string[]>([]);
   const { toast } = useToast();
@@ -39,6 +40,7 @@ export default function CreateAlbum() {
   };
 
   const createAlbum = async () => {
+    setLoading(true);
     return axios
       .post("/api/albums", {
         data: imgSrcs,
@@ -46,12 +48,14 @@ export default function CreateAlbum() {
         userID,
       })
       .then(() => {
+        setLoading(false);
         toast({
           title: "The album was created.",
         });
         resetForm();
       })
       .catch((err) => {
+        setLoading(false);
         toast({
           variant: "destructive",
           title: "Couldn't create the album",
@@ -119,7 +123,14 @@ export default function CreateAlbum() {
 
       {imgSrcs.length > 0 && (
         <div className="my-6">
-          <Button onClick={createAlbum}>Create Album</Button>
+          <Button onClick={createAlbum} className="flexz items-center gap-3">
+            {loading ? (
+              <ReloadIcon className="w-4 h-4 animate-spin" />
+            ) : (
+              <UploadIcon className="w-4 h-4" />
+            )}
+            Create Album
+          </Button>
         </div>
       )}
     </div>

@@ -12,6 +12,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Cross1Icon } from "@radix-ui/react-icons";
+import { Loader } from "@/components/ui/loader";
 
 interface Album {
   data: string[];
@@ -23,17 +24,21 @@ export default function Albums() {
   const [albums, setAlbums] = useState<Album[]>([]);
   const { toast } = useToast();
   const { data: session } = useSession();
+  const [loading, setLoading] = useState<boolean>();
 
   const userID = session?.user.userID;
 
   useEffect(() => {
     if (userID) {
+      setLoading(true);
       axios
         .get(`/api/albums?userID=${userID}`)
         .then(({ data }) => {
+          setLoading(false);
           setAlbums(data);
         })
         .catch((err) => {
+          setLoading(false);
           toast({
             variant: "destructive",
             title: "Couldn't get albums",
@@ -44,6 +49,7 @@ export default function Albums() {
 
   return (
     <div className="flex flex-col gap-4">
+      {loading && <Loader />}
       {(albums || []).map(({ name, data, _id }) => (
         <div key={_id} className="border-b border-gray-100">
           <h3 className="text-2xl mb-2">Album: {name}</h3>
