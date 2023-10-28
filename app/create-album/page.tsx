@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import axios from "axios";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
@@ -13,6 +14,9 @@ export default function CreateAlbum() {
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imgSrcs, setImgSrcs] = useState<string[]>([]);
   const { toast } = useToast();
+  const { data: session } = useSession();
+
+  const userID = session?.user.userID
 
   const onFileUpload = (ev: React.ChangeEvent<HTMLInputElement>) => {
     if (ev.target.files) {
@@ -31,6 +35,7 @@ export default function CreateAlbum() {
       .post("/api/albums", {
         data: imgSrcs,
         name: albumName,
+        userID,
       })
       .then(() => {
         toast({

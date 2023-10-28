@@ -16,21 +16,23 @@ export default function Albums() {
   const { toast } = useToast();
   const { data: session } = useSession();
 
-  console.log(session?.user.userID);
+  const userID = session?.user.userID
 
   useEffect(() => {
-    axios
-      .get("/api/albums")
-      .then(({ data }) => {
-        setAlbums(data);
-      })
-      .catch((err) => {
-        toast({
-          variant: "destructive",
-          title: "Couldn't create the album.",
+    if (userID) {
+      axios
+        .get(`/api/albums?userID=${userID}`)
+        .then(({ data }) => {
+          setAlbums(data);
+        })
+        .catch((err) => {
+          toast({
+            variant: "destructive",
+            title: "Couldn't create the album.",
+          });
         });
-      });
-  }, []);
+    }
+  }, [userID]);
 
   return (
     <div className="flex flex-col gap-4">
