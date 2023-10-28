@@ -21,7 +21,7 @@ const handler = NextAuth({
         });
 
         if (!userExists) {
-          await mongoDBService.insertDocument("users", {
+          await mongoDbClient.insertDocument("users", {
             userID,
             name,
             image,
