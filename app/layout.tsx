@@ -26,7 +26,9 @@ export default function RootLayout({
           fontSans.variable
         )}
       >
-        <NextAuthProvider>{children}</NextAuthProvider>
+        <NextAuthProvider>
+          <div className="max-w-[800px] mx-auto">{children}</div>
+        </NextAuthProvider>
       </body>
     </html>
   );
