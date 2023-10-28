@@ -14,7 +14,9 @@ const handler = NextAuth({
       try {
         const { id: userID, name, image } = user;
 
-        const userExists = await mongoDBService.findDocument("users", {
+        const mongoDbClient = await mongoDBService.connect();
+
+        const userExists = await mongoDbClient.findDocument("users", {
           userID,
         });
 
