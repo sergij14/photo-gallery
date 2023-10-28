@@ -19,7 +19,7 @@ import {
 import { Cross1Icon, ReloadIcon, UploadIcon } from "@radix-ui/react-icons";
 
 export default function CreateAlbum() {
-  const [albumName, setAlbumName] = useState("Album Name");
+  const [albumName, setAlbumName] = useState("album_name");
   const [loading, setLoading] = useState<boolean>();
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imgSrcs, setImgSrcs] = useState<string[]>([]);
@@ -73,8 +73,8 @@ export default function CreateAlbum() {
 
   return (
     <div>
-      <div className="flex flex-col gap-2">
-        <div className="max-w-[400px]">
+      <div className="flex gap-4">
+        <div className="w-1/2">
           <Label htmlFor="album-name">Album Name</Label>
           <Input
             value={albumName}
@@ -83,7 +83,7 @@ export default function CreateAlbum() {
             onChange={(ev) => setAlbumName(ev.target.value)}
           />
         </div>
-        <div className="max-w-[400px]">
+        <div className="w-1/2">
           <Label htmlFor="images">Image Files</Label>
           <Input
             accept=".jpg, .png, .svg"
