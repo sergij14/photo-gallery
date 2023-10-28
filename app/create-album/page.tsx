@@ -8,6 +8,14 @@ import { useToast } from "@/components/ui/use-toast";
 import { Label } from "@/components/ui/label";
 import { getBase64 } from "@/utils/imgUtils";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Cross1Icon } from "@radix-ui/react-icons";
 
 export default function CreateAlbum() {
   const [albumName, setAlbumName] = useState("Album Name");
@@ -16,7 +24,7 @@ export default function CreateAlbum() {
   const { toast } = useToast();
   const { data: session } = useSession();
 
-  const userID = session?.user.userID
+  const userID = session?.user.userID;
 
   const onFileUpload = (ev: React.ChangeEvent<HTMLInputElement>) => {
     if (ev.target.files) {
@@ -46,7 +54,7 @@ export default function CreateAlbum() {
       .catch((err) => {
         toast({
           variant: "destructive",
-          title: "Couldn't create the album.",
+          title: "Couldn't create the album",
         });
       });
   };
@@ -57,7 +65,7 @@ export default function CreateAlbum() {
       .catch((err) =>
         toast({
           variant: "destructive",
-          title: "Uh oh! Something went wrong.",
+          title: "Uh oh! Something went wrong",
         })
       );
   }, [imageFiles]);
@@ -88,11 +96,24 @@ export default function CreateAlbum() {
 
       <div className="grid grid-cols-3 gap-4 my-6">
         {imgSrcs.map((base64, idx) => (
-          <img
-            className="rounded-md object-cover h-[333px]"
-            src={base64}
-            key={idx}
-          />
+          <AlertDialog>
+            <AlertDialogTrigger>
+              <img
+                className="rounded-md object-cover h-[333px]"
+                src={base64}
+                key={idx}
+                alt=""
+              />
+            </AlertDialogTrigger>
+            <AlertDialogContent className="p-0 overflow-hidden">
+              <AlertDialogHeader className="h-full">
+                <img className="object-cover" src={base64} key={idx} />{" "}
+              </AlertDialogHeader>
+              <AlertDialogAction className="rounded-none rounded-bl-md absolute top-0 right-0">
+                <Cross1Icon className="w-4 h-4" />
+              </AlertDialogAction>
+            </AlertDialogContent>
+          </AlertDialog>
         ))}
       </div>
 

@@ -4,6 +4,14 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { useSession } from "next-auth/react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Cross1Icon } from "@radix-ui/react-icons";
 
 interface Album {
   data: string[];
@@ -16,7 +24,7 @@ export default function Albums() {
   const { toast } = useToast();
   const { data: session } = useSession();
 
-  const userID = session?.user.userID
+  const userID = session?.user.userID;
 
   useEffect(() => {
     if (userID) {
@@ -28,7 +36,7 @@ export default function Albums() {
         .catch((err) => {
           toast({
             variant: "destructive",
-            title: "Couldn't create the album.",
+            title: "Couldn't get albums",
           });
         });
     }
@@ -43,11 +51,23 @@ export default function Albums() {
           <h5 className="text-base mb-2">Images:</h5>
           <div className="grid grid-cols-3 gap-4 pb-4">
             {data.map((base64, idx) => (
-              <img
-                className="rounded-md object-cover h-[333px]"
-                src={base64}
-                key={idx}
-              />
+              <AlertDialog>
+                <AlertDialogTrigger>
+                  <img
+                    className="rounded-md object-cover h-[333px]"
+                    src={base64}
+                    key={idx}
+                  />
+                </AlertDialogTrigger>
+                <AlertDialogContent className="p-0 overflow-hidden">
+                  <AlertDialogHeader className="h-full">
+                    <img className="object-cover" src={base64} key={idx} />{" "}
+                  </AlertDialogHeader>
+                  <AlertDialogAction className="rounded-none rounded-bl-md absolute top-0 right-0">
+                    <Cross1Icon className="w-4 h-4" />
+                  </AlertDialogAction>
+                </AlertDialogContent>
+              </AlertDialog>
             ))}
           </div>
         </div>
