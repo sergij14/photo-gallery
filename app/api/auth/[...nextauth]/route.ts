@@ -10,6 +10,20 @@ const handler = NextAuth({
     }),
   ],
   callbacks: {
+    async session({ token, session }) {
+      try {
+        return {
+          ...session,
+          user: {
+            ...session.user,
+            userID: token.sub,
+          },
+        };
+      } catch (err) {
+        console.log(err);
+        return session;
+      }
+    },
     async signIn({ user }) {
       try {
         const { id: userID, name, image } = user;

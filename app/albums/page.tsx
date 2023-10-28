@@ -3,6 +3,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
+import { useSession } from "next-auth/react";
 
 interface Album {
   data: string[];
@@ -13,6 +14,9 @@ interface Album {
 export default function Albums() {
   const [albums, setAlbums] = useState<Album[]>([]);
   const { toast } = useToast();
+  const { data: session } = useSession();
+
+  console.log(session?.user.userID);
 
   useEffect(() => {
     axios
