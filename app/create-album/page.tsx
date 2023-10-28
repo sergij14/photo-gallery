@@ -1,10 +1,12 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { Label } from "@/components/ui/label";
 import { getBase64 } from "@/utils/imgUtils";
+import { Button } from "@/components/ui/button";
 
 export default function CreateAlbum() {
   const [albumName, setAlbumName] = useState("Album Name");
@@ -19,6 +21,31 @@ export default function CreateAlbum() {
     }
   };
 
+  const resetForm = () => {
+    setImgSrcs([]);
+    setImageFiles([]);
+  };
+
+  const createAlbum = async () => {
+    return axios
+      .post("/api/albums", {
+        data: imgSrcs,
+        name: albumName,
+      })
+      .then(() => {
+        toast({
+          title: "The album was created.",
+        });
+        resetForm();
+      })
+      .catch((err) => {
+        toast({
+          variant: "destructive",
+          title: "Couldn't create the album.",
+        });
+      });
+  };
+
   useEffect(() => {
     getBase64(imageFiles)
       .then((data) => setImgSrcs(data))
@@ -26,7 +53,6 @@ export default function CreateAlbum() {
         toast({
           variant: "destructive",
           title: "Uh oh! Something went wrong.",
-          description: "There was a problem with your request:",
         })
       );
   }, [imageFiles]);
@@ -64,6 +90,12 @@ export default function CreateAlbum() {
           />
         ))}
       </div>
+
+      {imgSrcs.length > 0 && (
+        <div className="my-6">
+          <Button onClick={createAlbum}>Create Album</Button>
+        </div>
+      )}
     </div>
   );
 }
