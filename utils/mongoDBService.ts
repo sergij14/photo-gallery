@@ -6,23 +6,19 @@ const DB_PASS = process.env.DB_PASS as string;
 const DB_URI = DB_STRING.replace("<password>", DB_PASS);
 
 class MongoDBService {
-  client?: MongoClient;
-  db?: Db;
-
-  constructor() {
-    this.connect();
-  }
+  private client?: MongoClient;
+  private db?: Db;
 
   async connect() {
     if (this.client) {
-      return;
+      return this;
     }
-
     try {
       const client = await MongoClient.connect(DB_URI);
       this.client = client;
 
       this.db = this.client.db();
+      return this;
     } catch (err) {
       console.error("Error connecting to MongoDB:", err);
       throw err;
@@ -35,13 +31,13 @@ class MongoDBService {
     }
   }
 
-  async insertDocument(collectionName: string, document={}) {
+  async insertDocument(collectionName: string, document = {}) {
     const collection = this.db?.collection(collectionName);
     const result = await collection?.insertOne(document);
     return result?.insertedId;
   }
 
-  async insertDocuments(collectionName: string, documents=[]) {
+  async insertDocuments(collectionName: string, documents = []) {
     const collection = this.db?.collection(collectionName);
     const result = await collection?.insertMany(documents);
     return result?.insertedIds;
