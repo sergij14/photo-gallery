@@ -104,7 +104,7 @@ export default function CreateAlbum() {
 
       <div className="album-container my-6">
         {imgSrcs.map((base64, idx) => (
-          <AlertDialog>
+          <AlertDialog key={idx}>
             <AlertDialogTrigger>
               <img className="album-item" src={base64} key={idx} alt="" />
             </AlertDialogTrigger>
@@ -121,7 +121,7 @@ export default function CreateAlbum() {
         {loadingUpload &&
           Array(loadingUpload)
             .fill("")
-            .map((_, idx) => <Skeleton className="album-item" />)}
+            .map((_, idx) => <Skeleton key={idx} className="album-item" />)}
       </div>
 
       {imgSrcs.length > 0 && (
