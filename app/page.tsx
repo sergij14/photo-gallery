@@ -10,7 +10,7 @@ export default function Home() {
   return (
     <main className="h-full">
       <div className="relative">
-        <div className="flex gap-2 items-center absolute z-50 top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2">
+        <div className="flex flex-col sm:text-left sm:flex-row gap-2 items-center absolute z-50 top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2">
           <Button
             className="flex items-center gap-2"
             onClick={() => router.push("/create-album")}

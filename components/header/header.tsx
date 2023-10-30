@@ -9,10 +9,10 @@ const Header = () => {
 
   return (
     <header className="flex flex-col gap-4">
-      <h1 className="text-4xl font-black text-center">
+      <h1 className="text-xl md:text-2xl lg:text-3xl font-black text-center">
         <Link href="/">Photo Gallery</Link>
       </h1>
-      <div className="flex justify-between items-center bg-gray-50 p-4 rounded-md mb-4">
+      <div className="flex flex-col gap-4 text-center sm:text-left sm:flex-row sm:justify-between items-center bg-gray-50 p-4 rounded-md mb-4">
         {session ? (
           <>
             <p>

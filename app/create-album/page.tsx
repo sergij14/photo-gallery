@@ -73,8 +73,8 @@ export default function CreateAlbum() {
 
   return (
     <div>
-      <div className="flex gap-4">
-        <div className="w-1/2">
+      <div className="flex flex-col gap-4 sm:flex-row">
+        <div className="w-full: sm:w-1/2">
           <Label htmlFor="album-name">Album Name</Label>
           <Input
             value={albumName}
@@ -83,7 +83,7 @@ export default function CreateAlbum() {
             onChange={(ev) => setAlbumName(ev.target.value)}
           />
         </div>
-        <div className="w-1/2">
+        <div className="w-full: sm:w-1/2">
           <Label htmlFor="images">Image Files</Label>
           <Input
             accept=".jpg, .png, .svg"

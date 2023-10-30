@@ -75,8 +75,8 @@ export default function Albums() {
       {loading && <Loader />}
       {(albums || []).map(({ name, data, _id }) => (
         <div key={_id} className="border-b border-gray-100">
-          <div className=" flex justify-between items-center gap-4">
-            <div className="mb-2">
+          <div className=" flex flex-col sm:flex-row justify-between items-start mb-4 gap-4">
+            <div>
               <h3 className="text-xl font-semibold">{name}</h3>
               <h3 className="text-sm italic text-gray-600">#: {_id}</h3>
             </div>
@@ -93,12 +93,12 @@ export default function Albums() {
               Delete Album
             </Button>
           </div>
-          <div className="grid grid-cols-3 gap-4 pb-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pb-4">
             {data.map((base64, idx) => (
               <AlertDialog>
-                <AlertDialogTrigger>
+                <AlertDialogTrigger className="">
                   <img
-                    className="rounded-md object-cover h-[333px]"
+                    className="rounded-md object-cover h-[270px] md:h-[350px] lg:h-[250px] w-full"
                     src={base64}
                     key={idx}
                   />
