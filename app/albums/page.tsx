@@ -87,11 +87,15 @@ export default function Albums() {
       {loading && <Loader />}
       {(albums || []).map(({ name, images, _id }) => {
         const isMoreThan3 = images.length > 3;
-        const imagesFiltered = isMoreThan3 ? images.slice(0, 2) : images;
+        const imagesFiltered = isMoreThan3 ? images.slice(0, 3) : images;
 
         return (
           <div key={_id} className="border-b border-gray-100">
-            <div className=" flex flex-col sm:flex-row items-start mb-4 gap-2">
+            <div className=" flex mb-4 justify-between gap-2">
+              <div>
+                <h3 className="text-xl font-semibold">{name}</h3>
+                <h3 className="text-sm italic text-gray-600">#: {_id}</h3>
+              </div>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button
@@ -124,10 +128,6 @@ export default function Albums() {
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
-              <div>
-                <h3 className="text-xl font-semibold">{name}</h3>
-                <h3 className="text-sm italic text-gray-600">#: {_id}</h3>
-              </div>
             </div>
 
             <div className="album-container pb-4">

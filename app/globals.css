@@ -9,9 +9,9 @@ body {
 }
 
 .album-container { 
-  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4;
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4;
 }
 
 .album-item {
-  @apply rounded-md object-cover h-[270px] md:h-[350px] lg:h-[250px] w-full;
+  @apply rounded-md object-cover h-[270px] md:h-[350px] lg:h-[250px] 2xl:lg:h-[200px] w-full;
 }
