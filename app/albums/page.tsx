@@ -11,12 +11,19 @@ import {
   AlertDialogHeader,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Cross1Icon, ReloadIcon } from "@radix-ui/react-icons";
+import {
+  Cross1Icon,
+  DotsHorizontalIcon,
+  ReloadIcon,
+} from "@radix-ui/react-icons";
 import { Loader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Album {
-  data: string[];
+  images: string[];
   name: string;
   _id: string;
 }
@@ -27,6 +34,8 @@ export default function Albums() {
   const { data: session } = useSession();
   const [loading, setLoading] = useState<boolean>();
   const [loadingDelete, setLoadingDelete] = useState<boolean>();
+
+  const router = useRouter();
 
   const userID = session?.user.userID;
 
@@ -73,49 +82,57 @@ export default function Albums() {
   return (
     <div className="flex flex-col gap-4">
       {loading && <Loader />}
-      {(albums || []).map(({ name, data, _id }) => (
-        <div key={_id} className="border-b border-gray-100">
-          <div className=" flex flex-col sm:flex-row justify-between items-start mb-4 gap-4">
-            <div>
-              <h3 className="text-xl font-semibold">{name}</h3>
-              <h3 className="text-sm italic text-gray-600">#: {_id}</h3>
+      {(albums || []).map(({ name, images, _id }) => {
+        const isMoreThan3 = images.length > 3;
+        const imagesFiltered = isMoreThan3 ? images.slice(0, 2) : images;
+
+        return (
+          <div key={_id} className="border-b border-gray-100">
+            <div className=" flex flex-col sm:flex-row justify-between items-start mb-4 gap-4">
+              <div>
+                <h3 className="text-xl font-semibold">{name}</h3>
+                <h3 className="text-sm italic text-gray-600">#: {_id}</h3>
+              </div>
+              <Button
+                onClick={() => deleteAlbum(_id)}
+                variant="destructive"
+                className="flex items-center gap-2"
+              >
+                {loadingDelete ? (
+                  <ReloadIcon className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Cross1Icon className="w-4 h-4" />
+                )}
+                Delete Album
+              </Button>
             </div>
-            <Button
-              onClick={() => deleteAlbum(_id)}
-              variant="destructive"
-              className="flex items-center gap-2"
-            >
-              {loadingDelete ? (
-                <ReloadIcon className="w-4 h-4 animate-spin" />
-              ) : (
-                <Cross1Icon className="w-4 h-4" />
-              )}
-              Delete Album
-            </Button>
+
+            <div className="album-container pb-4">
+              {imagesFiltered.map((base64, idx) => (
+                <AlertDialog key={idx}>
+                  <AlertDialogTrigger>
+                    <img className="album-item" src={base64} key={idx} />
+                  </AlertDialogTrigger>
+                  <AlertDialogContent className="p-0 overflow-hidden">
+                    <AlertDialogHeader className="h-full">
+                      <img className="object-cover" src={base64} key={idx} />{" "}
+                    </AlertDialogHeader>
+                    <AlertDialogAction className="rounded-none rounded-bl-md absolute top-0 right-0">
+                      <Cross1Icon className="w-4 h-4" />
+                    </AlertDialogAction>
+                  </AlertDialogContent>
+                </AlertDialog>
+              ))}
+              <Skeleton onClick={() => router.push(`albums/${_id}`)} className="album-item flex flex-col gap-4 items-center justify-center cursor-pointer">
+                <DotsHorizontalIcon />
+                <Button>
+                  All Images
+                </Button>
+              </Skeleton>
+            </div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pb-4">
-            {data.map((base64, idx) => (
-              <AlertDialog key={idx}>
-                <AlertDialogTrigger>
-                  <img
-                    className="rounded-md object-cover h-[270px] md:h-[350px] lg:h-[250px] w-full"
-                    src={base64}
-                    key={idx}
-                  />
-                </AlertDialogTrigger>
-                <AlertDialogContent className="p-0 overflow-hidden">
-                  <AlertDialogHeader className="h-full">
-                    <img className="object-cover" src={base64} key={idx} />{" "}
-                  </AlertDialogHeader>
-                  <AlertDialogAction className="rounded-none rounded-bl-md absolute top-0 right-0">
-                    <Cross1Icon className="w-4 h-4" />
-                  </AlertDialogAction>
-                </AlertDialogContent>
-              </AlertDialog>
-            ))}
-          </div>
-        </div>
-      ))}
+        );
+      })}
       {albums.length === 0 && <p>No albums...</p>}
     </div>
   );

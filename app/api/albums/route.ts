@@ -2,13 +2,13 @@ import { mongoDBService } from "@/utils/mongoDBService";
 import { ObjectId } from "mongodb";
 
 export async function POST(req: Request) {
-  const { data, name, userID } = await req.json();
+  const { images, name, userID } = await req.json();
 
   try {
     const mongoDbClient = await mongoDBService.connect();
 
     const res = await mongoDbClient.insertDocument("albums", {
-      data,
+      images,
       name,
       userID,
     });
@@ -20,12 +20,23 @@ export async function POST(req: Request) {
 
 export async function GET(req: Request) {
   try {
+    let query = {};
+
     const { searchParams } = new URL(req.url);
     const userID = searchParams.get("userID");
+    const albumID = searchParams.get("albumID");
+
+    if (userID) {
+      query = { userID };
+    }
+
+    if (albumID) {
+      query = { _id: new ObjectId(albumID) };
+    }
 
     const mongoDbClient = await mongoDBService.connect();
 
-    const res = await mongoDbClient.findDocuments("albums", { userID });
+    const res = await mongoDbClient.findDocuments("albums", query);
     return new Response(JSON.stringify(res), { status: 200 });
   } catch (error) {
     return new Response("Failed to get albums", { status: 500 });

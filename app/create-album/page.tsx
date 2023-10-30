@@ -43,7 +43,7 @@ export default function CreateAlbum() {
     setLoading(true);
     return axios
       .post("/api/albums", {
-        data: imgSrcs,
+        images: imgSrcs,
         name: albumName,
         userID,
       })
