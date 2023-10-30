@@ -7,8 +7,12 @@ import { useSession } from "next-auth/react";
 import {
   AlertDialog,
   AlertDialogAction,
+  AlertDialogCancel,
   AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
   AlertDialogHeader,
+  AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import {
@@ -19,7 +23,6 @@ import {
 import { Loader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface Album {
@@ -88,23 +91,43 @@ export default function Albums() {
 
         return (
           <div key={_id} className="border-b border-gray-100">
-            <div className=" flex flex-col sm:flex-row justify-between items-start mb-4 gap-4">
+            <div className=" flex flex-col sm:flex-row items-start mb-4 gap-2">
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="destructive"
+                    size="icon"
+                    className="flex items-center gap-2"
+                  >
+                    {loadingDelete ? (
+                      <ReloadIcon className="w-3 h-3 animate-spin" />
+                    ) : (
+                      <Cross1Icon className="w-3 h-3" />
+                    )}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Are you absolutely sure?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete
+                      the album from database.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => deleteAlbum(_id)}>
+                      Continue
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
               <div>
                 <h3 className="text-xl font-semibold">{name}</h3>
                 <h3 className="text-sm italic text-gray-600">#: {_id}</h3>
               </div>
-              <Button
-                onClick={() => deleteAlbum(_id)}
-                variant="destructive"
-                className="flex items-center gap-2"
-              >
-                {loadingDelete ? (
-                  <ReloadIcon className="w-4 h-4 animate-spin" />
-                ) : (
-                  <Cross1Icon className="w-4 h-4" />
-                )}
-                Delete Album
-              </Button>
             </div>
 
             <div className="album-container pb-4">
@@ -123,12 +146,15 @@ export default function Albums() {
                   </AlertDialogContent>
                 </AlertDialog>
               ))}
-              <Skeleton onClick={() => router.push(`albums/${_id}`)} className="album-item flex flex-col gap-4 items-center justify-center cursor-pointer">
-                <DotsHorizontalIcon />
-                <Button>
-                  All Images
-                </Button>
-              </Skeleton>
+              {isMoreThan3 && (
+                <Skeleton
+                  onClick={() => router.push(`albums/${_id}`)}
+                  className="album-item flex flex-col gap-4 items-center justify-center cursor-pointer"
+                >
+                  <DotsHorizontalIcon />
+                  <Button>All Images</Button>
+                </Skeleton>
+              )}
             </div>
           </div>
         );
