@@ -20,7 +20,7 @@ const Header = () => {
             </p>
             <Button
               className="flex items-center gap-2"
-              onClick={() => signOut()}
+              onClick={() => signOut({ callbackUrl: "/" })}
             >
               <PinLeftIcon className="w-4 h-4" />
               Sign out
