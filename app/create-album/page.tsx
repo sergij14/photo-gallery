@@ -17,10 +17,12 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Cross1Icon, ReloadIcon, UploadIcon } from "@radix-ui/react-icons";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function CreateAlbum() {
   const [albumName, setAlbumName] = useState("album_name");
   const [loading, setLoading] = useState<boolean>();
+  const [loadingUpload, setLoadingUpload] = useState<number>();
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imgSrcs, setImgSrcs] = useState<string[]>([]);
   const { toast } = useToast();
@@ -30,6 +32,7 @@ export default function CreateAlbum() {
   const userID = session?.user.userID;
 
   const onFileUpload = (ev: React.ChangeEvent<HTMLInputElement>) => {
+    setLoadingUpload(ev.target.files?.length);
     if (ev.target.files) {
       const files = Array.from(ev.target.files);
       setImageFiles((prev) => [...prev, ...files]);
@@ -62,13 +65,17 @@ export default function CreateAlbum() {
 
   useEffect(() => {
     getBase64(imageFiles)
-      .then((data) => setImgSrcs(data))
-      .catch((err) =>
+      .then((data) => {
+        setImgSrcs(data);
+        setLoadingUpload(undefined);
+      })
+      .catch(() => {
+        setLoadingUpload(undefined);
         toast({
           variant: "destructive",
           title: "Uh oh! Something went wrong",
-        })
-      );
+        });
+      });
   }, [imageFiles]);
 
   return (
@@ -95,16 +102,11 @@ export default function CreateAlbum() {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-4 my-6">
+      <div className="album-container my-6">
         {imgSrcs.map((base64, idx) => (
           <AlertDialog>
             <AlertDialogTrigger>
-              <img
-                className="rounded-md object-cover h-[333px]"
-                src={base64}
-                key={idx}
-                alt=""
-              />
+              <img className="album-item" src={base64} key={idx} alt="" />
             </AlertDialogTrigger>
             <AlertDialogContent className="p-0 overflow-hidden">
               <AlertDialogHeader className="h-full">
@@ -116,6 +118,10 @@ export default function CreateAlbum() {
             </AlertDialogContent>
           </AlertDialog>
         ))}
+        {loadingUpload &&
+          Array(loadingUpload)
+            .fill("")
+            .map((_, idx) => <Skeleton className="album-item" />)}
       </div>
 
       {imgSrcs.length > 0 && (

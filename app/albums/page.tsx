@@ -96,7 +96,7 @@ export default function Albums() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pb-4">
             {data.map((base64, idx) => (
               <AlertDialog>
-                <AlertDialogTrigger className="">
+                <AlertDialogTrigger>
                   <img
                     className="rounded-md object-cover h-[270px] md:h-[350px] lg:h-[250px] w-full"
                     src={base64}
