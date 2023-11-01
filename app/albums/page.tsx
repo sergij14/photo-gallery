@@ -20,6 +20,7 @@ import {
   DotsHorizontalIcon,
   ReloadIcon,
 } from "@radix-ui/react-icons";
+import Link from "next/link";
 import { Loader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -81,6 +82,11 @@ export default function Albums() {
       });
   };
 
+  const navigateToPage = (idx: number) => {
+    setAlbums([]);
+    router.push(`/albums?page=${idx + 1}`);
+  };
+
   useEffect(() => {
     if (userID) {
       getAlbums();
@@ -98,7 +104,9 @@ export default function Albums() {
           <div key={_id} className="border-b border-gray-100">
             <div className=" flex mb-4 justify-between gap-2">
               <div>
-                <h3 className="text-xl font-semibold">{name}</h3>
+                <h3 className="text-xl font-semibold">
+                  <Link href={`albums/${_id}`}>{name}</Link>
+                </h3>
                 <h3 className="text-sm italic text-gray-600">#: {_id}</h3>
               </div>
               <AlertDialog>
@@ -173,14 +181,13 @@ export default function Albums() {
               <Button
                 key={idx}
                 variant="outline"
-                onClick={() => router.push(`/albums?page=${idx + 1}`)}
+                onClick={() => navigateToPage(idx)}
                 disabled={idx + 1 === page}
               >
                 {idx + 1}
               </Button>
             ))}
       </div>
-      {albums.length === 0 && <p>No albums...</p>}
     </div>
   );
 }
