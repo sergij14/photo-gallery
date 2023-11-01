@@ -25,25 +25,22 @@ export async function GET(req: Request) {
     const albumID = searchParams.get("albumID");
     const page = searchParams.get("page") || 1;
     const limit = searchParams.get("limit") || 4;
-    const args = [];
+    let query = {};
 
     if (userID) {
-      args.push({ userID });
+      query = { userID };
     }
 
     if (albumID) {
-      args.push({ _id: new ObjectId(albumID) });
+      query = { _id: new ObjectId(albumID) };
     }
 
-    if (page) {
-      const skip = (+page - 1) * +limit;
-
-      args.push(skip);
-    }
+    const skip = (+page - 1) * +limit;
 
     const mongoDbClient = await mongoDBService.connect();
 
-    const res = (await mongoDbClient.findDocuments("albums", ...args)) || [];
+    const res =
+      (await mongoDbClient.findDocuments("albums", query, skip, +limit)) || [];
     const totalDocs = (await mongoDbClient.countDocuments("albums")) || 0;
 
     const numOfPages = Math.ceil(totalDocs / 4);

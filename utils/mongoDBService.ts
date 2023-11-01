@@ -53,7 +53,7 @@ class MongoDBService {
     return collection?.countDocuments();
   }
 
-  async findDocuments(collectionName: string, query = {}, skip = 0, limit = 4) {
+  async findDocuments(collectionName: string, query = {}, skip = 0, limit:number) {
     const collection = this.db?.collection(collectionName);
 
     let queryOperation = collection?.find(query);
