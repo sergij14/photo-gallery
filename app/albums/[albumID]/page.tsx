@@ -37,7 +37,7 @@ export default function AlbumPage() {
       .get(`/api/albums?albumID=${albumID}`)
       .then(({ data }) => {
         setLoading(false);
-        setAlbum(data);
+        setAlbum(data.albums);
       })
       .catch((err) => {
         setLoading(false);

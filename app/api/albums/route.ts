@@ -20,24 +20,37 @@ export async function POST(req: Request) {
 
 export async function GET(req: Request) {
   try {
-    let query = {};
-
     const { searchParams } = new URL(req.url);
     const userID = searchParams.get("userID");
     const albumID = searchParams.get("albumID");
+    const page = searchParams.get("page") || 1;
+    const limit = searchParams.get("limit") || 4;
+    const args = [];
 
     if (userID) {
-      query = { userID };
+      args.push({ userID });
     }
 
     if (albumID) {
-      query = { _id: new ObjectId(albumID) };
+      args.push({ _id: new ObjectId(albumID) });
+    }
+
+    if (page) {
+      const skip = (+page - 1) * +limit;
+
+      args.push(skip);
     }
 
     const mongoDbClient = await mongoDBService.connect();
 
-    const res = await mongoDbClient.findDocuments("albums", query);
-    return new Response(JSON.stringify(res), { status: 200 });
+    const res = (await mongoDbClient.findDocuments("albums", ...args)) || [];
+    const totalDocs = (await mongoDbClient.countDocuments("albums")) || 0;
+
+    const numOfPages = Math.ceil(totalDocs / 4);
+
+    return new Response(JSON.stringify({ albums: res, numOfPages }), {
+      status: 200,
+    });
   } catch (error) {
     return new Response("Failed to get albums", { status: 500 });
   }

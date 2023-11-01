@@ -22,7 +22,7 @@ import {
 } from "@radix-ui/react-icons";
 import { Loader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface Album {
@@ -33,22 +33,27 @@ interface Album {
 
 export default function Albums() {
   const [albums, setAlbums] = useState<Album[]>([]);
+  const [totalPages, setTotalPages] = useState<number>();
   const { toast } = useToast();
   const { data: session } = useSession();
   const [loading, setLoading] = useState<boolean>();
   const [loadingDelete, setLoadingDelete] = useState<boolean>();
 
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const page = +(searchParams.get("page") || 1);
 
   const userID = session?.user.userID;
 
   const getAlbums = async () => {
     setLoading(true);
     return axios
-      .get(`/api/albums?userID=${userID}`)
+      .get(`/api/albums?userID=${userID}&page=${page}`)
       .then(({ data }) => {
         setLoading(false);
-        setAlbums(data);
+        setAlbums(data.albums);
+        setTotalPages(data.numOfPages);
       })
       .catch((err) => {
         setLoading(false);
@@ -80,7 +85,7 @@ export default function Albums() {
     if (userID) {
       getAlbums();
     }
-  }, [userID]);
+  }, [userID, page]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -159,6 +164,22 @@ export default function Albums() {
           </div>
         );
       })}
+      <div className="flex justify-center gap-3 m-4">
+        {totalPages &&
+          totalPages > 0 &&
+          Array(totalPages)
+            .fill("")
+            .map((_, idx) => (
+              <Button
+                key={idx}
+                variant="outline"
+                onClick={() => router.push(`/albums?page=${idx + 1}`)}
+                disabled={idx + 1 === page}
+              >
+                {idx + 1}
+              </Button>
+            ))}
+      </div>
       {albums.length === 0 && <p>No albums...</p>}
     </div>
   );

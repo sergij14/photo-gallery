@@ -48,9 +48,21 @@ class MongoDBService {
     return collection?.findOne(query);
   }
 
-  async findDocuments(collectionName: string, query = {}) {
+  async countDocuments(collectionName: string) {
     const collection = this.db?.collection(collectionName);
-    return collection?.find(query).toArray();
+    return collection?.countDocuments();
+  }
+
+  async findDocuments(collectionName: string, query = {}, skip = 0, limit = 4) {
+    const collection = this.db?.collection(collectionName);
+
+    let queryOperation = collection?.find(query);
+
+    if (skip) {
+      queryOperation = queryOperation?.skip(skip).limit(limit);
+    }
+
+    return queryOperation?.toArray();
   }
 
   async updateDocument(collectionName: string, query = {}, update = {}) {
