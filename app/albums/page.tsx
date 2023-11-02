@@ -61,6 +61,7 @@ export default function Albums() {
         toast({
           variant: "destructive",
           title: "Couldn't get albums",
+          duration: 2000
         });
       });
   };
@@ -78,6 +79,7 @@ export default function Albums() {
         toast({
           variant: "destructive",
           title: "Couldn't delete album",
+          duration: 2000
         });
       });
   };
@@ -174,7 +176,7 @@ export default function Albums() {
       })}
       <div className="flex justify-center gap-3 m-4">
         {totalPages &&
-          totalPages > 0 &&
+          totalPages > 1 &&
           Array(totalPages)
             .fill("")
             .map((_, idx) => (

@@ -51,6 +51,7 @@ export default function CreateAlbum() {
         setLoading(false);
         toast({
           title: "The album was created.",
+          duration: 2000
         });
         router.push("/albums");
       })
@@ -59,6 +60,7 @@ export default function CreateAlbum() {
         toast({
           variant: "destructive",
           title: "Couldn't create the album",
+          duration: 2000
         });
       });
   };
@@ -74,6 +76,7 @@ export default function CreateAlbum() {
         toast({
           variant: "destructive",
           title: "Uh oh! Something went wrong",
+          duration: 2000
         });
       });
   }, [imageFiles]);

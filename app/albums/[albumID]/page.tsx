@@ -44,6 +44,7 @@ export default function AlbumPage() {
         toast({
           variant: "destructive",
           title: "Couldn't get album",
+          duration: 2000
         });
       });
   };
